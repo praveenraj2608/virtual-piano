@@ -1,0 +1,68 @@
+---
+- name: Configure Virtual Piano DevOps Environment
+  hosts: local
+  connection: local
+  gather_facts: true
+
+  tasks:
+
+    - name: Check Docker
+      ansible.builtin.command:
+        cmd: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Show Docker version
+      ansible.builtin.debug:
+        msg: "Docker: {{ docker_version.stdout }}"
+
+    - name: Check Minikube
+      ansible.builtin.command:
+        cmd: minikube version
+      register: minikube_version
+      changed_when: false
+
+    - name: Show Minikube version
+      ansible.builtin.debug:
+        msg: "Minikube: {{ minikube_version.stdout }}"
+
+    - name: Check kubectl
+      ansible.builtin.command:
+        cmd: kubectl version --client
+      register: kubectl_version
+      changed_when: false
+
+    - name: Show kubectl version
+      ansible.builtin.debug:
+        msg: "kubectl: {{ kubectl_version.stdout }}"
+
+    - name: Check Minikube cluster
+      ansible.builtin.command:
+        cmd: minikube status --output=json
+      register: minikube_status
+      changed_when: false
+
+    - name: Show Minikube status
+      ansible.builtin.debug:
+        var: minikube_status.stdout
+
+    - name: Verify Kubernetes node
+      ansible.builtin.command:
+        cmd: kubectl get nodes
+      register: kubernetes_nodes
+      changed_when: false
+
+    - name: Show Kubernetes nodes
+      ansible.builtin.debug:
+        var: kubernetes_nodes.stdout
+
+    - name: Verify Virtual Piano deployment
+      ansible.builtin.command:
+        cmd: kubectl get deployment virtual-piano
+      register: piano_deployment
+      changed_when: false
+      failed_when: false
+
+    - name: Show Virtual Piano deployment
+      ansible.builtin.debug:
+        var: piano_deployment.stdout

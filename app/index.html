@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Virtual Piano Keyboard - A modern, responsive client-side web application built with HTML5, CSS3, Vanilla JavaScript, and Web Audio API.">
+  <title>Virtual Piano Keyboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="logo-wrapper">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+      </div>
+      <h1 class="app-title">Virtual Piano</h1>
+      <p class="app-subtitle">Play music directly in your browser</p>
+    </header>
+
+    <!-- Main Piano Application Section -->
+    <main class="piano-main">
+      <!-- Status & Note Display -->
+      <section class="status-section" aria-label="Current Note Display">
+        <div class="status-card" id="statusCard">
+          <span class="status-prefix">Now Playing:</span>
+          <span class="note-display" id="noteDisplay" aria-live="polite">Press a key to play</span>
+        </div>
+      </section>
+
+      <!-- Piano Controls Toolbar -->
+      <section class="controls-section" aria-label="Piano Controls">
+        <!-- Volume Control -->
+        <div class="control-group volume-group">
+          <label for="volumeSlider" id="volumeLabel" class="control-label">
+            <span class="control-icon" aria-hidden="true">🔊</span>
+            <span>Volume</span>
+            <span class="control-value" id="volumeValue">75%</span>
+          </label>
+          <input 
+            type="range" 
+            id="volumeSlider" 
+            min="0" 
+            max="100" 
+            value="75" 
+            aria-labelledby="volumeLabel"
+            class="slider-input"
+          >
+        </div>
+
+        <!-- Octave Selector -->
+        <div class="control-group octave-group">
+          <label id="octaveLabel" class="control-label">
+            <span class="control-icon" aria-hidden="true">🎹</span>
+            <span>Octave</span>
+          </label>
+          <div class="octave-controls" role="group" aria-labelledby="octaveLabel">
+            <button type="button" id="octaveDown" class="btn btn-step" aria-label="Lower octave" title="Decrease octave">−</button>
+            <span id="octaveDisplay" class="octave-badge" aria-live="polite">4</span>
+            <button type="button" id="octaveUp" class="btn btn-step" aria-label="Raise octave" title="Increase octave">+</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="control-group actions-group">
+          <button type="button" id="muteBtn" class="btn btn-action" aria-label="Mute sound" aria-pressed="false">
+            <span id="muteIcon" class="btn-icon" aria-hidden="true">🔇</span>
+            <span id="muteText">Mute</span>
+          </button>
+          <button type="button" id="resetBtn" class="btn btn-action" aria-label="Reset all settings to default">
+            <span class="btn-icon" aria-hidden="true">↺</span>
+            <span>Reset</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Interactive Piano Keyboard -->
+      <section class="keyboard-stage" aria-label="Piano Keys">
+        <div class="piano-frame">
+          <div class="piano-board" id="pianoBoard" role="region" aria-label="Piano Keyboard">
+            <!-- White Keys -->
+            <button type="button" class="key key-white" data-note="C" data-octave-offset="0" data-key="a" id="key-C" aria-label="C key">
+              <span class="key-shortcut">A</span>
+              <span class="key-label">C<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="D" data-octave-offset="0" data-key="s" id="key-D" aria-label="D key">
+              <span class="key-shortcut">S</span>
+              <span class="key-label">D<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="E" data-octave-offset="0" data-key="d" id="key-E" aria-label="E key">
+              <span class="key-shortcut">D</span>
+              <span class="key-label">E<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="F" data-octave-offset="0" data-key="f" id="key-F" aria-label="F key">
+              <span class="key-shortcut">F</span>
+              <span class="key-label">F<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="G" data-octave-offset="0" data-key="g" id="key-G" aria-label="G key">
+              <span class="key-shortcut">G</span>
+              <span class="key-label">G<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="A" data-octave-offset="0" data-key="h" id="key-A" aria-label="A key">
+              <span class="key-shortcut">H</span>
+              <span class="key-label">A<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="B" data-octave-offset="0" data-key="j" id="key-B" aria-label="B key">
+              <span class="key-shortcut">J</span>
+              <span class="key-label">B<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-white" data-note="C" data-octave-offset="1" data-key="k" id="key-C-high" aria-label="High C key">
+              <span class="key-shortcut">K</span>
+              <span class="key-label">C<span class="octave-sub">5</span></span>
+            </button>
+
+            <!-- Black Keys (Positioned absolutely over white keys) -->
+            <button type="button" class="key key-black" data-note="C#" data-octave-offset="0" data-key="w" id="key-Cs" style="--black-index: 0;" aria-label="C sharp key">
+              <span class="key-shortcut">W</span>
+              <span class="key-label">C#<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-black" data-note="D#" data-octave-offset="0" data-key="e" id="key-Ds" style="--black-index: 1;" aria-label="D sharp key">
+              <span class="key-shortcut">E</span>
+              <span class="key-label">D#<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-black" data-note="F#" data-octave-offset="0" data-key="t" id="key-Fs" style="--black-index: 3;" aria-label="F sharp key">
+              <span class="key-shortcut">T</span>
+              <span class="key-label">F#<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-black" data-note="G#" data-octave-offset="0" data-key="y" id="key-Gs" style="--black-index: 4;" aria-label="G sharp key">
+              <span class="key-shortcut">Y</span>
+              <span class="key-label">G#<span class="octave-sub">4</span></span>
+            </button>
+            <button type="button" class="key key-black" data-note="A#" data-octave-offset="0" data-key="u" id="key-As" style="--black-index: 5;" aria-label="A sharp key">
+              <span class="key-shortcut">U</span>
+              <span class="key-label">A#<span class="octave-sub">4</span></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Keyboard Controls Reference Guide -->
+      <section class="instructions-section" aria-labelledby="controlsGuideTitle">
+        <div class="instructions-header">
+          <h2 id="controlsGuideTitle" class="instructions-title">Keyboard Controls</h2>
+          <p class="instruction-hint">Click a key or use your computer keyboard to play.</p>
+        </div>
+
+        <div class="key-mappings-grid">
+          <div class="mapping-card">
+            <h3 class="mapping-heading">White Keys</h3>
+            <div class="mapping-list">
+              <div class="mapping-item"><kbd>A</kbd> <span>→ C</span></div>
+              <div class="mapping-item"><kbd>S</kbd> <span>→ D</span></div>
+              <div class="mapping-item"><kbd>D</kbd> <span>→ E</span></div>
+              <div class="mapping-item"><kbd>F</kbd> <span>→ F</span></div>
+              <div class="mapping-item"><kbd>G</kbd> <span>→ G</span></div>
+              <div class="mapping-item"><kbd>H</kbd> <span>→ A</span></div>
+              <div class="mapping-item"><kbd>J</kbd> <span>→ B</span></div>
+              <div class="mapping-item"><kbd>K</kbd> <span>→ C (+1)</span></div>
+            </div>
+          </div>
+
+          <div class="mapping-card">
+            <h3 class="mapping-heading">Black Keys</h3>
+            <div class="mapping-list">
+              <div class="mapping-item"><kbd>W</kbd> <span>→ C#</span></div>
+              <div class="mapping-item"><kbd>E</kbd> <span>→ D#</span></div>
+              <div class="mapping-item"><kbd>T</kbd> <span>→ F#</span></div>
+              <div class="mapping-item"><kbd>Y</kbd> <span>→ G#</span></div>
+              <div class="mapping-item"><kbd>U</kbd> <span>→ A#</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>DevOps Assessment Project &bull; HTML5 &bull; CSS3 &bull; Vanilla JavaScript &bull; Web Audio API</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
